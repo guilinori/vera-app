@@ -1,69 +1,91 @@
-// Base URL for your Python Flask backend
-// Change this to your live Render/Railway URL once you deploy your backend online!
-const API_BASE = 'http://127.0.0.1:5000/api';
-
 // ====================================================
-// 1. NAVIGATION & TAB SWITCHING
+// VERA.ai - Standalone Companion Script (GitHub Pages)
 // ====================================================
 
+// Default initial data structure
+const defaultData = {
+  profile: {
+    name: '',
+    gender: '',
+    age: '',
+    birthday: '',
+    attachment_style: '',
+    childhood_notes: ''
+  },
+  logs: [
+    {
+      id: 1,
+      month: "07",
+      year: "2026",
+      title: "Daily Reflection - Growth",
+      content: "Spent time outside today. Noticed how small steps add up over time."
+    }
+  ]
+};
+
+// Initialize localStorage if empty
+function initStorage() {
+  if (!localStorage.getItem('vera_profile')) {
+    localStorage.setItem('vera_profile', JSON.stringify(defaultData.profile));
+  }
+  if (!localStorage.getItem('vera_logs')) {
+    localStorage.setItem('vera_logs', JSON.stringify(defaultData.logs));
+  }
+}
+
+// ----------------------------------------------------
+// 1. Navigation & Tab Switcher
+// ----------------------------------------------------
 function switchTab(viewName) {
-  // Hide all view sections
+  // Hide all views
   document.querySelectorAll('.view').forEach(view => {
     view.classList.remove('active');
   });
 
-  // Activate the selected section
+  // Activate selected view
   const targetView = document.getElementById(`view-${viewName}`);
   if (targetView) {
     targetView.classList.add('active');
   }
 
-  // Update window header title
+  // Update header title
   const windowTitle = document.getElementById('window-title');
   if (windowTitle) {
     windowTitle.innerText = `VERA - ${viewName.toUpperCase()}`;
   }
 
-  // Load backend data dynamically based on selected tab
-  if (viewName === 'library') {
-    loadLogs();
-  } else if (viewName === 'profile') {
-    loadProfile();
-  }
+  // Load section-specific data
+  if (viewName === 'library') loadLogs();
+  if (viewName === 'profile') loadProfile();
 }
 
-// ====================================================
-// 2. LIVE CLOCK BAR
-// ====================================================
-
+// ----------------------------------------------------
+// 2. Real-Time Clock
+// ----------------------------------------------------
 function updateClock() {
   const now = new Date();
-  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const clockElement = document.getElementById('clock');
   if (clockElement) {
-    clockElement.innerText = timeString;
+    clockElement.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 }
-
 setInterval(updateClock, 1000);
 
-// ====================================================
-// 3. CHAT ROOM HANDLER
-// ====================================================
-
+// ----------------------------------------------------
+// 3. Companion Chat Logic
+// ----------------------------------------------------
 const chatForm = document.getElementById('chat-form');
 
 if (chatForm) {
-  chatForm.addEventListener('submit', async (e) => {
+  chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
     const input = document.getElementById('user-input');
     const chatBox = document.getElementById('chat-box');
     const message = input.value.trim();
 
     if (!message) return;
 
-    // Display user's message in chat window immediately
+    // Render user message immediately
     chatBox.innerHTML += `
       <div class="msg">
         <strong>You:</strong> ${escapeHTML(message)}
@@ -72,68 +94,56 @@ if (chatForm) {
     input.value = '';
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    try {
-      // Send message to Flask backend
-      const res = await fetch(`${API_BASE}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
-      });
-
-      if (!res.ok) throw new Error('Network response was not ok');
-
-      const data = await res.json();
-
-      // Display VERA's response
+    // Simulate VERA's reflection response directly in browser JS
+    setTimeout(() => {
+      const response = generateVeraResponse(message);
       chatBox.innerHTML += `
         <div class="msg vera-msg">
-          🌱 <strong>VERA:</strong> ${escapeHTML(data.reply)}
+          🌱 <strong>VERA:</strong> ${response}
         </div>
       `;
-    } catch (err) {
-      // Error handling when backend is unreachable
-      chatBox.innerHTML += `
-        <div class="msg vera-msg" style="color: #c0392b;">
-          🌱 <strong>VERA:</strong> (System) Unable to reach companion server. Is app.py running?
-        </div>
-      `;
-    }
-
-    chatBox.scrollTop = chatBox.scrollHeight;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 450);
   });
 }
 
-// ====================================================
-// 4. USER PROFILE HANDLER (FETCH & SAVE)
-// ====================================================
-
-async function loadProfile() {
-  try {
-    const res = await fetch(`${API_BASE}/profile`);
-    if (!res.ok) throw new Error('Failed to fetch profile');
-
-    const data = await res.json();
-    
-    // Populate form fields with existing data
-    if (document.getElementById('prof-name')) document.getElementById('prof-name').value = data.name || '';
-    if (document.getElementById('prof-gender')) document.getElementById('prof-gender').value = data.gender || '';
-    if (document.getElementById('prof-age')) document.getElementById('prof-age').value = data.age || '';
-    if (document.getElementById('prof-birthday')) document.getElementById('prof-birthday').value = data.birthday || '';
-    if (document.getElementById('prof-attachment')) document.getElementById('prof-attachment').value = data.attachment_style || '';
-    if (document.getElementById('prof-childhood')) document.getElementById('prof-childhood').value = data.childhood_notes || '';
-  } catch (err) {
-    console.error('Error loading profile:', err);
+function generateVeraResponse(userMsg) {
+  const lowerMsg = userMsg.toLowerCase();
+  
+  if (lowerMsg.includes('hello') || lowerMsg.includes('hi') || lowerMsg.includes('hey')) {
+    return "Hello! I'm here and listening. What's on your mind today?";
   }
+  if (lowerMsg.includes('sad') || lowerMsg.includes('upset') || lowerMsg.includes('tired')) {
+    return "I hear you. It sounds like things feel heavy right now. Do you want to unpack what brought on that feeling?";
+  }
+  if (lowerMsg.includes('happy') || lowerMsg.includes('good') || lowerMsg.includes('great')) {
+    return "It's wonderful to hear that! What was the highlight of your day?";
+  }
+  
+  return `I hear you. When you reflect on '${escapeHTML(userMsg)}', how does that make you feel overall?`;
+}
+
+// ----------------------------------------------------
+// 4. Profile Management (localStorage)
+// ----------------------------------------------------
+function loadProfile() {
+  const profile = JSON.parse(localStorage.getItem('vera_profile')) || defaultData.profile;
+  
+  if (document.getElementById('prof-name')) document.getElementById('prof-name').value = profile.name || '';
+  if (document.getElementById('prof-gender')) document.getElementById('prof-gender').value = profile.gender || '';
+  if (document.getElementById('prof-age')) document.getElementById('prof-age').value = profile.age || '';
+  if (document.getElementById('prof-birthday')) document.getElementById('prof-birthday').value = profile.birthday || '';
+  if (document.getElementById('prof-attachment')) document.getElementById('prof-attachment').value = profile.attachment_style || '';
+  if (document.getElementById('prof-childhood')) document.getElementById('prof-childhood').value = profile.childhood_notes || '';
 }
 
 const profileForm = document.getElementById('profile-form');
 
 if (profileForm) {
-  profileForm.addEventListener('submit', async (e) => {
+  profileForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const statusSpan = document.getElementById('profile-status');
-    if (statusSpan) statusSpan.innerText = 'Saving...';
-
+    
     const updatedProfile = {
       name: document.getElementById('prof-name')?.value.trim() || '',
       gender: document.getElementById('prof-gender')?.value.trim() || '',
@@ -143,62 +153,39 @@ if (profileForm) {
       childhood_notes: document.getElementById('prof-childhood')?.value.trim() || ''
     };
 
-    try {
-      const res = await fetch(`${API_BASE}/profile`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedProfile)
-      });
+    localStorage.setItem('vera_profile', JSON.stringify(updatedProfile));
 
-      const data = await res.json();
-      if (data.status === 'success') {
-        if (statusSpan) {
-          statusSpan.style.color = '#27ae60';
-          statusSpan.innerText = 'Saved!';
-          setTimeout(() => { statusSpan.innerText = ''; }, 2500);
-        }
-      }
-    } catch (err) {
-      if (statusSpan) {
-        statusSpan.style.color = '#c0392b';
-        statusSpan.innerText = 'Error saving profile.';
-      }
+    if (statusSpan) {
+      statusSpan.style.color = '#27ae60';
+      statusSpan.innerText = 'Saved!';
+      setTimeout(() => { statusSpan.innerText = ''; }, 2500);
     }
   });
 }
 
-// ====================================================
-// 5. LIBRARY LOGS HANDLER
-// ====================================================
-
-async function loadLogs() {
+// ----------------------------------------------------
+// 5. Library Logs Management
+// ----------------------------------------------------
+function loadLogs() {
   const logsContainer = document.getElementById('logs-list');
   if (!logsContainer) return;
 
-  try {
-    const res = await fetch(`${API_BASE}/logs`);
-    if (!res.ok) throw new Error('Failed to fetch logs');
+  const logs = JSON.parse(localStorage.getItem('vera_logs')) || defaultData.logs;
 
-    const data = await res.json();
-
-    if (!data.logs || data.logs.length === 0) {
-      logsContainer.innerHTML = '<p>No journal entries found.</p>';
-      return;
-    }
-
-    // Render log entries
-    logsContainer.innerHTML = data.logs.map(log => `
-      <div style="border: 2px solid #000; padding: 10px; margin-bottom: 10px; background: #fff;">
-        <strong>${escapeHTML(log.title)}</strong> (${escapeHTML(log.month)}/${escapeHTML(log.year)})
-        <p style="margin-top: 6px;">${escapeHTML(log.content)}</p>
-      </div>
-    `).join('');
-  } catch (err) {
-    logsContainer.innerHTML = '<p style="color: #c0392b;">Error loading logs from server.</p>';
+  if (logs.length === 0) {
+    logsContainer.innerHTML = '<p>No journal entries found.</p>';
+    return;
   }
+
+  logsContainer.innerHTML = logs.map(log => `
+    <div style="border: 2px solid #000; padding: 10px; margin-bottom: 10px; background: #fff;">
+      <strong>${escapeHTML(log.title)}</strong> (${escapeHTML(log.month)}/${escapeHTML(log.year)})
+      <p style="margin-top: 6px;">${escapeHTML(log.content)}</p>
+    </div>
+  `).join('');
 }
 
-// Helper utility to sanitize user inputs and prevent XSS
+// Helper to escape special HTML characters and prevent XSS
 function escapeHTML(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -208,7 +195,8 @@ function escapeHTML(str) {
     .replace(/'/g, '&#039;');
 }
 
-// Initialize clock on page load
+// Global initialization
 document.addEventListener('DOMContentLoaded', () => {
+  initStorage();
   updateClock();
 });
