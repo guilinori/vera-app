@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VERA.ai - Retro Companion</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Retro OS Window Container -->
+  <div class="window-container">
+    
+    <!-- Title Bar -->
+    <div class="window-header">
+      <span id="window-title">VERA - HOME</span>
+      <span id="clock">00:00 AM</span>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button onclick="switchTab('home')">Home</button>
+      <button onclick="switchTab('chat')">Chat</button>
+      <button onclick="switchTab('library')">Library</button>
+      <button onclick="switchTab('profile')">Profile</button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="window-content">
+      
+      <!-- HOME VIEW (Default Active Tab) -->
+      <section id="view-home" class="view active">
+        <h2>🌱 Welcome to VERA</h2>
+        <p>Your non-clinical personal AI companion for daily self-reflection and journaling.</p>
+        <button onclick="switchTab('chat')">Start Chatting</button>
+      </section>
+
+      <!-- CHAT VIEW -->
+      <section id="view-chat" class="view">
+        <div id="chat-box" class="chat-window">
+          <div class="msg vera-msg">🌱 <strong>VERA:</strong> Hello! How are you feeling today?</div>
+        </div>
+        <form id="chat-form" class="chat-input-area">
+          <input type="text" id="user-input" placeholder="Type your thoughts here..." autocomplete="off" required />
+          <button type="submit">Send</button>
+        </form>
+      </section>
+
+      <!-- LIBRARY VIEW -->
+      <section id="view-library" class="view">
+        <h3>Journal Entries</h3>
+        <div id="logs-list">Loading logs...</div>
+      </section>
+
+      <!-- PROFILE VIEW -->
+      <section id="view-profile" class="view">
+        <h3>User Profile</h3>
+        <form id="profile-form">
+          <label>Name: <input type="text" id="prof-name" /></label><br/><br/>
+          <label>Gender: <input type="text" id="prof-gender" /></label><br/><br/>
+          <label>Age: <input type="number" id="prof-age" /></label><br/><br/>
+          <label>Birthday: <input type="text" id="prof-birthday" /></label><br/><br/>
+          <label>Attachment Style: <input type="text" id="prof-attachment" /></label><br/><br/>
+          <label>Notes: <textarea id="prof-childhood"></textarea></label><br/><br/>
+          <button type="submit">Save Profile</button>
+          <span id="profile-status"></span>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
