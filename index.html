@@ -1,75 +1,147 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VERA.ai - Retro Companion</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace UI</title>
+    <link rel="stylesheet" href="see.css">
 </head>
 <body>
 
-  <!-- Retro OS Window Container -->
-  <div class="window-container">
-    
-    <!-- Title Bar -->
-    <div class="window-header">
-      <span id="window-title">VERA - HOME</span>
-      <span id="clock">00:00 AM</span>
-    </div>
+    <aside class="sidebar">
+        <div class="logo">Vera Ai</div>
 
-    <!-- Navigation Tabs -->
-    <nav class="nav-tabs">
-      <button onclick="switchTab('home')">Home</button>
-      <button onclick="switchTab('chat')">Chat</button>
-      <button onclick="switchTab('library')">Library</button>
-      <button onclick="switchTab('profile')">Profile</button>
-    </nav>
+        <button class="new-chat">
+            + New Session
+        </button>
 
-    <!-- Main Content Area -->
-    <main class="window-content">
-      
-      <!-- HOME VIEW (Default Active Tab) -->
-      <section id="view-home" class="view active">
-        <h2>🌱 Welcome to VERA</h2>
-        <p>Your non-clinical personal AI companion for daily self-reflection and journaling.</p>
-        <button onclick="switchTab('chat')">Start Chatting</button>
-      </section>
-
-      <!-- CHAT VIEW -->
-      <section id="view-chat" class="view">
-        <div id="chat-box" class="chat-window">
-          <div class="msg vera-msg">🌱 <strong>VERA:</strong> Hello! How are you feeling today?</div>
+        <div class="nav">
+            <div class="nav-item">🕒 History</div>
+            <div class="nav-item">🔗 Connections</div>
+            <div class="nav-item">✅ Tasks</div>
+            <div class="nav-item">📚 Resources</div>
         </div>
-        <form id="chat-form" class="chat-input-area">
-          <input type="text" id="user-input" placeholder="Type your thoughts here..." autocomplete="off" required />
-          <button type="submit">Send</button>
-        </form>
-      </section>
 
-      <!-- LIBRARY VIEW -->
-      <section id="view-library" class="view">
-        <h3>Journal Entries</h3>
-        <div id="logs-list">Loading logs...</div>
-      </section>
+        <div class="section-title">Recent</div>
 
-      <!-- PROFILE VIEW -->
-      <section id="view-profile" class="view">
-        <h3>User Profile</h3>
-        <form id="profile-form">
-          <label>Name: <input type="text" id="prof-name" /></label><br/><br/>
-          <label>Gender: <input type="text" id="prof-gender" /></label><br/><br/>
-          <label>Age: <input type="number" id="prof-age" /></label><br/><br/>
-          <label>Birthday: <input type="text" id="prof-birthday" /></label><br/><br/>
-          <label>Attachment Style: <input type="text" id="prof-attachment" /></label><br/><br/>
-          <label>Notes: <textarea id="prof-childhood"></textarea></label><br/><br/>
-          <button type="submit">Save Profile</button>
-          <span id="profile-status"></span>
-        </form>
-      </section>
+        <div class="chat-list">
+            <div class="chat-item">Breathing exercises</div>
+            <div class="chat-item">Thought process planning</div>
+            <div class="chat-item">Day to day list</div>
+            <div class="chat-item">Reminders</div>
+            <div class="chat-item">Behavior evaluation</div>
+        </div>
+
+        <div class="profile">
+            <div class="avatar"></div>
+            <div>
+                <strong>John Smith</strong><br>
+                <small>Pro Plan</small>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+
+        <div class="header">
+            <div class="mode-switch">
+                <div class="mode active" data-mode="chat">Chat</div>
+                <div class="mode" data-mode="work">Work</div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <h1 class="title">
+                What's on your mind today?
+            </h1>
+
+            <div class="workspace-box">
+
+                <div class="prompt-card">
+                    <div class="prompt-placeholder">
+                        Tell me what you feel...
+                    </div>
+
+                    <div class="prompt-footer">
+                        <button class="plus">+</button>
+
+                        <div class="controls">
+                            <button class="control-btn">
+                                Medium ▼
+                            </button>
+
+                            <button class="control-btn start-btn">
+                                Start
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="integrations">
+
+                    <div class="integration">
+                        <div class="integration-left">
+                            <div class="icon">E</div>
+
+                            <div>
+                                <div class="integration-title">
+                                    Excercises
+                                </div>
+                                <div class="integration-desc">
+                                    Perform breathing and meditation exercises
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="connect">Proceed</button>
+                    </div>
+
+                    <div class="integration">
+                        <div class="integration-left">
+                            <div class="icon">R</div>
+
+                            <div>
+                                <div class="integration-title">
+                                    Resources
+                                </div>
+                                <div class="integration-desc">
+                                    Provide mental health articles and guides
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="connect">Proceed</button>
+                    </div>
+
+                    <div class="integration">
+                        <div class="integration-left">
+                            <div class="icon">G</div>
+
+                            <div>
+                                <div class="integration-title">
+                                    Guidance
+                                </div>
+                                <div class="integration-desc">
+                                    Seek guidance and advice
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="connect">Proceed</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </main>
-  </div>
 
-  <script src="script.js"></script>
+    <script src="javers.js"></script>
 </body>
 </html>
+
